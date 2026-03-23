@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using TaskPro.Api.Contracts.Auth;
 using TaskPro.Application.Abstractions;
 using TaskPro.Domain.Users;
@@ -32,13 +33,27 @@ public static class AuthEndpoints
                 }.Where(kvp => kvp.Value.Length > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
             }
 
-            var user = new User(UserId.New(), request.Email.Trim().ToLowerInvariant(), request.DisplayName.Trim());
-            await users.AddAsync(user, ct);
+            var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+            var existing = await users.GetByEmailAsync(normalizedEmail, ct);
+            if (existing is not null)
+            {
+                return Results.Conflict(new { message = "El correo ya está registrado." });
+            }
 
+            var user = new User(UserId.New(), normalizedEmail, request.DisplayName.Trim());
             var creds = new UserCredentials(user.Id, hasher.Hash(request.Password));
+
+            await users.AddAsync(user, ct);
             await credentialsRepo.AddAsync(creds, ct);
 
-            await uow.SaveChangesAsync(ct);
+            try
+            {
+                await uow.SaveChangesAsync(ct);
+            }
+            catch (DbUpdateException)
+            {
+                return Results.Conflict(new { message = "El correo ya está registrado." });
+            }
 
             var token = tokenService.CreateAccessToken(user);
             return Results.Ok(new AuthResponse(user.Id.Value, user.Email, user.DisplayName, token));

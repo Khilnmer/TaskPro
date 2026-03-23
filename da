@@ -1,0 +1,115 @@
+[1mdiff --git a/frontend/Dockerfile b/frontend/Dockerfile[m
+[1mindex 482071b..49d35bd 100644[m
+[1m--- a/frontend/Dockerfile[m
+[1m+++ b/frontend/Dockerfile[m
+[36m@@ -1,7 +1,7 @@[m
+ FROM node:20-alpine AS deps[m
+ WORKDIR /app[m
+ [m
+[31m-# Install deps based on lockfile[m
+[32m+[m
+ COPY package.json package-lock.json* ./[m
+ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi[m
+ [m
+[36m@@ -19,12 +19,12 @@[m [mWORKDIR /app[m
+ ENV NODE_ENV=production[m
+ ENV PORT=3000[m
+ [m
+[31m-# Next.js needs these at runtime[m
+[32m+[m
+ COPY --from=builder /app/package.json ./package.json[m
+ COPY --from=builder /app/node_modules ./node_modules[m
+ COPY --from=builder /app/.next ./.next[m
+ [m
+[31m-# Some repos don't have a /public directory; Next.js doesn't require it.[m
+[32m+[m
+ RUN mkdir -p ./public[m
+ [m
+ EXPOSE 3000[m
+[1mdiff --git a/frontend/package-lock.json b/frontend/package-lock.json[m
+[1mindex 8b7544b..40435d0 100644[m
+[1m--- a/frontend/package-lock.json[m
+[1m+++ b/frontend/package-lock.json[m
+[36m@@ -13,7 +13,7 @@[m
+         "react-dom": "18.3.1"[m
+       },[m
+       "devDependencies": {[m
+[31m-        "@types/node": "20.14.10",[m
+[32m+[m[32m        "@types/node": "^20.14.10",[m
+         "@types/react": "18.3.3",[m
+         "@types/react-dom": "18.3.0",[m
+         "autoprefixer": "10.4.19",[m
+[1mdiff --git a/frontend/package.json b/frontend/package.json[m
+[1mindex 5836342..aa237fd 100644[m
+[1m--- a/frontend/package.json[m
+[1m+++ b/frontend/package.json[m
+[36m@@ -14,7 +14,7 @@[m
+     "react-dom": "18.3.1"[m
+   },[m
+   "devDependencies": {[m
+[31m-    "@types/node": "20.14.10",[m
+[32m+[m[32m    "@types/node": "^20.14.10",[m
+     "@types/react": "18.3.3",[m
+     "@types/react-dom": "18.3.0",[m
+     "autoprefixer": "10.4.19",[m
+[1mdiff --git a/frontend/src/lib/api.ts b/frontend/src/lib/api.ts[m
+[1mindex 7a7c3e0..dd5562f 100644[m
+[1m--- a/frontend/src/lib/api.ts[m
+[1m+++ b/frontend/src/lib/api.ts[m
+[36m@@ -7,7 +7,23 @@[m [mimport {[m
+   UserResponse[m
+ } from "@/types/domain";[m
+ [m
+[31m-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://localhost:7198/api";[m
+[32m+[m[32m// Default to HTTP for local development to avoid SSL/cert issues.[m
+[32m+[m[32m// Can be overridden via NEXT_PUBLIC_API_URL.[m
+[32m+[m[32mconst API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5071/api";[m
+[32m+[m
+[32m+[m[32mfunction flipScheme(url: string): string {[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    const u = new URL(url);[m
+[32m+[m[32m    if (u.protocol === "https:") {[m
+[32m+[m[32m      u.protocol = "http:";[m
+[32m+[m[32m    } else if (u.protocol === "http:") {[m
+[32m+[m[32m      u.protocol = "https:";[m
+[32m+[m[32m    }[m
+[32m+[m[32m    return u.toString().replace(/\/$/, "");[m
+[32m+[m[32m  } catch {[m
+[32m+[m[32m    return url;[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+ [m
+ async function http<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {[m
+   const headers: Record<string, string> = {[m
+[36m@@ -19,11 +35,26 @@[m [masync function http<T>(path: string, options: RequestInit = {}, token?: string):[m
+     headers.Authorization = `Bearer ${token}`;[m
+   }[m
+ [m
+[31m-  const response = await fetch(`${API_URL}${path}`, {[m
+[31m-    ...options,[m
+[31m-    headers,[m
+[31m-    cache: "no-store"[m
+[31m-  });[m
+[32m+[m[32m  const request = async (baseUrl: string) =>[m
+[32m+[m[32m    fetch(`${baseUrl}${path}`, {[m
+[32m+[m[32m      ...options,[m
+[32m+[m[32m      headers,[m
+[32m+[m[32m      cache: "no-store"[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m  let response: Response;[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    response = await request(API_URL);[m
+[32m+[m[32m  } catch (e) {[m
+[32m+[m[32m    // Common when the API is up but the scheme doesn't match (HTTP vs HTTPS)[m
+[32m+[m[32m    // e.g. net::ERR_SSL_PROTOCOL_ERROR.[m
+[32m+[m[32m    const fallbackBaseUrl = flipScheme(API_URL);[m
+[32m+[m[32m    if (fallbackBaseUrl !== API_URL) {[m
+[32m+[m[32m      response = await request(fallbackBaseUrl);[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m      throw e;[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+ [m
+   if (!response.ok) {[m
+     const errorBody = await response.text();[m

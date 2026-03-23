@@ -30,6 +30,16 @@ Servicios:
 
 > El contenedor de SQL Server crea la base de datos `TaskPro` automáticamente en el arranque mediante scripts en `backend/sqlserver/init`.
 
+## Primer uso (UI)
+
+1. Abrir el frontend: http://localhost:3000
+2. Crear un usuario (registro).
+3. Al registrarte, la app te redirige automáticamente al **Dashboard**.
+4. Desde el Dashboard puedes:
+   - Crear proyectos
+   - Crear y gestionar tareas
+   - (Opcional) añadir comentarios
+
 Para bajar los contenedores:
 
 ```bash

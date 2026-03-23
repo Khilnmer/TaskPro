@@ -1,0 +1,31 @@
+# .NET
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+**/.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# Node / Next.js
+**/node_modules/
+**/.next/
+**/out/
+
+# Environment / secrets
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.template
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+**/*.log
+

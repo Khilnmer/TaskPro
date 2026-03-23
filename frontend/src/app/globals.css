@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #111014;
+  --mist: #f5f4ef;
+  --amber: #f7a31b;
+  --teal: #0f8b8d;
+  --clay: #d86f45;
+  --card-border: rgba(17, 16, 20, 0.08);
+  --card-shadow: 0 24px 64px rgba(17, 16, 20, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  background: radial-gradient(circle at 15% 20%, rgba(247, 163, 27, 0.35), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(15, 139, 141, 0.25), transparent 40%),
+    linear-gradient(135deg, #fffef7 0%, #f2efe6 100%);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+main {
+  width: 100%;
+}
+
+.surface {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.fancy-in {
+  animation: rise 500ms ease;
+}
+
+.page-shell {
+  width: min(100%, 72rem);
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2.5rem) 1.5rem;
+}
+
+.landing-shell {
+  min-height: 100vh;
+}
+
+.hero-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-grid {
+  margin-top: 3.5rem;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 1fr);
+}
+
+.hero-panel,
+.stack-panel,
+.auth-card,
+.nav-panel,
+.content-panel {
+  border: 1px solid var(--card-border);
+  border-radius: 1.75rem;
+  background: rgba(255, 255, 255, 0.74);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--card-shadow);
+}
+
+.hero-panel,
+.stack-panel,
+.auth-card,
+.content-panel {
+  padding: clamp(1.5rem, 2.6vw, 2rem);
+}
+
+.nav-panel {
+  padding: 1.5rem;
+}
+
+.primary-action,
+.secondary-action,
+.sidebar-link,
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.primary-action,
+.secondary-action {
+  border-radius: 1rem;
+  padding: 0.85rem 1.4rem;
+}
+
+.primary-action {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+}
+
+.primary-action.accent {
+  background: var(--amber);
+  color: var(--ink);
+}
+
+.secondary-action {
+  border: 1px solid rgba(17, 16, 20, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.primary-action:hover,
+.secondary-action:hover,
+.sidebar-link:hover,
+.logout-button:hover {
+  transform: translateY(-1px);
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(100%, 32rem);
+}
+
+.app-shell {
+  width: min(100%, 86rem);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 17.5rem minmax(0, 1fr);
+}
+
+.nav-panel nav {
+  margin-top: 2rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sidebar-link {
+  width: 100%;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.sidebar-link-active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.sidebar-user {
+  margin-top: 2.5rem;
+  border: 1px solid var(--card-border);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.48);
+  padding: 1rem;
+}
+
+.logout-button {
+  margin-top: 0.75rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--clay);
+  color: #fff;
+  padding: 0.7rem 0.95rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.status-shell {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  font-family: var(--font-display), var(--font-body), sans-serif;
+}
+
+@media (max-width: 900px) {
+  .hero-grid,
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

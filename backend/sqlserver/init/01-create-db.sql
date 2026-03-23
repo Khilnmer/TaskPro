@@ -1,0 +1,5 @@
+IF DB_ID(N'TaskPro') IS NULL
+BEGIN
+    CREATE DATABASE [TaskPro];
+END
+GO

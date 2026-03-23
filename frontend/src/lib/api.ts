@@ -7,7 +7,23 @@ import {
   UserResponse
 } from "@/types/domain";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://localhost:7198/api";
+// Default to HTTP for local development to avoid SSL/cert issues.
+// Can be overridden via NEXT_PUBLIC_API_URL.
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5071/api";
+
+function flipScheme(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.protocol === "https:") {
+      u.protocol = "http:";
+    } else if (u.protocol === "http:") {
+      u.protocol = "https:";
+    }
+    return u.toString().replace(/\/$/, "");
+  } catch {
+    return url;
+  }
+}
 
 async function http<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
   const headers: Record<string, string> = {
@@ -19,11 +35,26 @@ async function http<T>(path: string, options: RequestInit = {}, token?: string):
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-    cache: "no-store"
-  });
+  const request = async (baseUrl: string) =>
+    fetch(`${baseUrl}${path}`, {
+      ...options,
+      headers,
+      cache: "no-store"
+    });
+
+  let response: Response;
+  try {
+    response = await request(API_URL);
+  } catch (e) {
+    // Common when the API is up but the scheme doesn't match (HTTP vs HTTPS)
+    // e.g. net::ERR_SSL_PROTOCOL_ERROR.
+    const fallbackBaseUrl = flipScheme(API_URL);
+    if (fallbackBaseUrl !== API_URL) {
+      response = await request(fallbackBaseUrl);
+    } else {
+      throw e;
+    }
+  }
 
   if (!response.ok) {
     const errorBody = await response.text();

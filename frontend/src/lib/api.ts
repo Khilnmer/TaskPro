@@ -27,6 +27,18 @@ async function http<T>(path: string, options: RequestInit = {}, token?: string):
 
   if (!response.ok) {
     const errorBody = await response.text();
+
+    // Try to extract a friendly message from JSON responses.
+    try {
+      const asJson = JSON.parse(errorBody) as { message?: string; title?: string };
+      const message = asJson.message ?? asJson.title;
+      if (message) {
+        throw new Error(message);
+      }
+    } catch {
+      // ignore JSON parse errors
+    }
+
     throw new Error(errorBody || "Request failed");
   }
 

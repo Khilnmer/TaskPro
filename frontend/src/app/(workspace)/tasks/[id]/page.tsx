@@ -51,7 +51,7 @@ export default function TaskDetailsPage({ params }: { params: { id: string } }):
       setUsers(userData);
     };
 
-    load().catch((e) => setError(e instanceof Error ? e.message : "Load failed"));
+    load().catch((e) => setError(e instanceof Error ? e.message : "No se pudo cargar la tarea"));
   }, [token, taskId]);
 
   async function refresh(): Promise<void> {
@@ -109,7 +109,7 @@ export default function TaskDetailsPage({ params }: { params: { id: string } }):
             </div>
           </div>
         ) : (
-          <p className="mt-3 text-sm text-black/60">Loading...</p>
+          <p className="mt-3 text-sm text-black/60">Cargando...</p>
         )}
 
         <h3 className="mt-6 text-sm font-bold">Cambiar estado</h3>
@@ -171,7 +171,7 @@ export default function TaskDetailsPage({ params }: { params: { id: string } }):
                           await api.assignees.remove(token, taskId, id);
                           await refresh();
                         } catch (err) {
-                          setError(err instanceof Error ? err.message : "Unassign failed");
+                          setError(err instanceof Error ? err.message : "No se pudo quitar la asignación");
                         }
                       }}
                     >
@@ -182,7 +182,7 @@ export default function TaskDetailsPage({ params }: { params: { id: string } }):
               ))}
             </ul>
           ) : (
-            <p>No assignees yet.</p>
+            <p className="text-sm text-black/70">Todavía no hay asignados.</p>
           )}
         </div>
 
@@ -212,7 +212,7 @@ export default function TaskDetailsPage({ params }: { params: { id: string } }):
                 setAssignUserId("");
                 await refresh();
               } catch (err) {
-                setError(err instanceof Error ? err.message : "Assign failed");
+                setError(err instanceof Error ? err.message : "No se pudo asignar el usuario");
               }
             }}
           >
@@ -222,9 +222,9 @@ export default function TaskDetailsPage({ params }: { params: { id: string } }):
       </section>
 
       <section className="surface rounded-3xl border border-black/10 p-6 shadow-card">
-        <h2 className="text-lg font-bold">Comments</h2>
+        <h2 className="text-lg font-bold">Comentarios</h2>
         <div className="mt-3 grid gap-3">
-          {comments.length === 0 ? <p className="text-sm text-black/70">No comments yet.</p> : null}
+          {comments.length === 0 ? <p className="text-sm text-black/70">Todavía no hay comentarios.</p> : null}
           {comments.map((c) => (
             <div key={c.id} className="rounded-xl border border-black/10 bg-white p-3">
               <p className="text-sm">{c.content}</p>

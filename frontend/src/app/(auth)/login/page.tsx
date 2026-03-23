@@ -8,8 +8,8 @@ import { FormEvent, useState } from "react";
 export default function LoginPage(): JSX.Element {
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("ana@taskpro.dev");
-  const [password, setPassword] = useState("TaskPro123*");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +29,7 @@ export default function LoginPage(): JSX.Element {
 
   return (
     <>
-      <h1 className="text-3xl font-bold">Iniciar sesion</h1>
+      <h1 className="text-3xl font-bold">Iniciar sesión</h1>
       <p className="mt-2 text-sm text-black/60">Accede a tu workspace para gestionar proyectos y tareas.</p>
 
       <form className="mt-6 space-y-4" onSubmit={onSubmit}>
@@ -40,17 +40,19 @@ export default function LoginPage(): JSX.Element {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             type="email"
+            placeholder="tu@correo.com"
             required
           />
         </label>
 
         <label className="block text-sm font-semibold">
-          Contrasena
+          Contraseña
           <input
             className="mt-1 w-full rounded-xl border border-black/20 bg-white px-3 py-2"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             type="password"
+            placeholder="Tu contraseña"
             required
           />
         </label>
@@ -67,9 +69,9 @@ export default function LoginPage(): JSX.Element {
       </form>
 
       <p className="mt-4 text-sm text-black/60">
-        No tienes cuenta?{" "}
+        ¿No tienes cuenta?{" "}
         <Link href="/register" className="font-semibold text-taskpro-teal">
-          Registrate
+          Regístrate
         </Link>
       </p>
     </>

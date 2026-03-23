@@ -77,14 +77,14 @@ export default function UsersPage(): JSX.Element {
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 md:grid-cols-3">
           <input
             className="rounded-lg border border-black/20 bg-white/80 px-3 py-2"
-            placeholder="Display name"
+            placeholder="Nombre de usuario"
             value={form.displayName}
             onChange={(event) => setForm((prev) => ({ ...prev, displayName: event.target.value }))}
             required
           />
           <input
             className="rounded-lg border border-black/20 bg-white/80 px-3 py-2"
-            placeholder="Email"
+            placeholder="Correo"
             type="email"
             value={form.email}
             onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
@@ -116,8 +116,8 @@ export default function UsersPage(): JSX.Element {
           <table className="w-full border-collapse text-sm">
             <thead className="bg-black/5 text-left">
               <tr>
-                <th className="px-4 py-3">Display name</th>
-                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Nombre de usuario</th>
+                <th className="px-4 py-3">Correo</th>
                 <th className="px-4 py-3">Acciones</th>
               </tr>
             </thead>

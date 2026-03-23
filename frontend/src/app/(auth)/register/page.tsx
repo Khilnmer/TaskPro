@@ -78,7 +78,7 @@ export default function RegisterPage(): JSX.Element {
       </form>
 
       <p className="mt-4 text-sm text-black/60">
-        Ya tienes cuenta?{" "}
+        ¿Ya tienes cuenta?{" "}
         <Link href="/login" className="font-semibold text-taskpro-teal">
           Inicia sesión
         </Link>

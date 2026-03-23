@@ -1,4 +1,6 @@
-﻿# TaskPro
+<img width="1194" height="530" alt="image" src="https://github.com/user-attachments/assets/33c245aa-36e6-4b39-b43f-dd42ffa38ae0" />
+
+ # TaskPro
 
 Aplicación full-stack para gestión de proyectos y tareas.
 
